@@ -1,0 +1,12 @@
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPool
+metadata:
+  name: replicapool
+  namespace: rook-ceph
+spec:
+  failureDomain: host
+  replicated:
+    size: 2
+  # Sets up the CRUSH rule for the pool to distribute data only on the specified device class. 
+  # If left empty or unspecified, the pool will use the cluster’s default CRUSH root, which usually distributes data over all OSDs, regardless of their class.
+  # deviceClass: hdd

@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/tls-acme: "true"
+  name: rook-ceph-mgr-dashboard
+  namespace: rook-ceph
+spec:
+  rules:
+  - host: ceph-dashboard.utyun.com
+    http:
+      paths:
+      - backend:
+          serviceName: rook-ceph-mgr-dashboard
+          servicePort: 7000
+        path: /
+  tls:
+  - hosts:
+    - ceph-dashboard.utyun.com
+    secretName: tls-ceph-dashboard-utyun-com

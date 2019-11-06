@@ -1,0 +1,75 @@
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: rook-ceph
+  namespace: rook-ceph
+spec:
+  cephVersion:
+    image: ceph/ceph:v14.2.4-20190917
+  # 节点ceph目录,包含配置和log
+  dataDirHostPath: /var/lib/rook
+  mon:
+    # Set the number of mons to be started. The number should be odd and between 1 and 9. 
+    # If not specified the default is set to 3 and allowMultiplePerNode is also set to true.
+    count: 3
+    # Enable (true) or disable (false) the placement of multiple mons on one node. Default is false.
+    allowMultiplePerNode: false
+  dashboard:
+    enabled: true
+  mgr:
+    modules:
+    - name: pg_autoscaler
+      enabled: true
+  # cluster level storage configuration and selection
+  storage:
+    useAllNodes: false
+    useAllDevices: false
+    deviceFilter:
+    location:
+    config:
+      metadataDevice:
+      #databaseSizeMB: "1024" # this value can be removed for environments with normal sized disks (100 GB or larger)
+      #journalSizeMB: "1024"  # this value can be removed for environments with normal sized disks (20 GB or larger)
+    # 节点列表,使用k8s中节点名
+    nodes:
+    - name: k8s1138026node
+      devices:             # specific devices to use for storage can be specified for each node
+      - name: "vdb"
+      config:              # configuration can be specified at the node level which overrides the cluster level config
+        storeType: bluestore
+    - name: k8s1138027node
+      devices:             # specific devices to use for storage can be specified for each node
+      - name: "vdb"
+      config:              # configuration can be specified at the node level which overrides the cluster level config
+        storeType: bluestore
+    - name: k8s1138031node
+      devices:             # specific devices to use for storage can be specified for each node
+      - name: "vdb"
+      config:              # configuration can be specified at the node level which overrides the cluster level config
+        storeType: bluestore
+    - name: k8s1138032node
+      devices:             # specific devices to use for storage can be specified for each node
+      - name: "vdb"
+      config:              # configuration can be specified at the node level which overrides the cluster level config
+        storeType: bluestore
+  placement:
+    all:
+      nodeAffinity:
+      tolerations:
+    mgr:
+      nodeAffinity:
+      tolerations:
+    mon:
+      nodeAffinity:
+      tolerations:
+    # 建议osd设置节点亲合性
+    osd:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: ceph-role
+              operator: In
+              values:
+              - osd
+      tolerations:

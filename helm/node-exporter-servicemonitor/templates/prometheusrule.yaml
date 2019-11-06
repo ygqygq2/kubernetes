@@ -12,11 +12,11 @@ metadata:
     {{- else if .Values.additionalRulesConfigMapLabels }}       # Deprecated for .Values.additionalRulesLabels
 {{ toYaml .Values.additionalRulesConfigMapLabels | indent 4 }}  # Deprecated for .Values.additionalRulesLabels
     {{- end }} 
-  name: {{ template "mysql-exporter.fullname" . }}
+  name: {{ template "node-exporter-servicemonitor.fullname" . }}
 spec:
 {{- if .Values.prometheusRules }}
   groups:
 {{ toYaml .Values.prometheusRules | indent 4 }}
 {{ else }}
-{{ include "mod.rules.yaml.tpl" . | indent 2}}
+{{ include "linux.rules.yaml.tpl" . | indent 2}}
 {{ end }}

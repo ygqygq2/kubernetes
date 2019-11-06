@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-rbd-dy
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: ceph-cephfs-volume
+              mountPath: "/usr/share/nginx/html"
+      volumes:
+      - name: ceph-cephfs-volume
+        persistentVolumeClaim:
+          claimName: rbd-pv-claim
