@@ -1,0 +1,48 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ceph-rbd
+  annotations:
+    storageclass.beta.kubernetes.io/is-default-class: "true"
+provisioner: ceph.rook.io/block
+parameters:
+  blockPool: replicapool
+  # The value of "clusterNamespace" MUST be the same as the one in which your rook cluster exist
+  clusterNamespace: rook-ceph
+  # Specify the filesystem type of the volume. If not specified, it will use `ext4`.
+  fstype: xfs
+# Optional, default reclaimPolicy is "Delete". Other options are: "Retain", "Recycle" as documented in https://kubernetes.io/docs/concepts/storage/storage-classes/
+reclaimPolicy: Retain
+# Optional, if you want to add dynamic resize for PVC. Works for Kubernetes 1.14+
+# For now only ext3, ext4, xfs resize support provided, like in Kubernetes itself.
+allowVolumeExpansion: true
+---
+# apiVersion: storage.k8s.io/v1
+# kind: StorageClass
+# metadata:
+#   name: cephfs
+# # Change "rook-ceph" provisioner prefix to match the operator namespace if needed
+# provisioner: rook-ceph.cephfs.csi.ceph.com
+# parameters:
+#   # clusterID is the namespace where operator is deployed.
+#   clusterID: rook-ceph
+# 
+#   # CephFS filesystem name into which the volume shall be created
+#   fsName: cephfs-k8s
+# 
+#   # Ceph pool into which the volume shall be created
+#   # Required for provisionVolume: "true"
+#   pool: cephfs-k8s-data0
+# 
+#   # Root path of an existing CephFS volume
+#   # Required for provisionVolume: "false"
+#   # rootPath: /absolute/path
+# 
+#   # The secrets contain Ceph admin credentials. These are generated automatically by the operator
+#   # in the same namespace as the cluster.
+#   csi.storage.k8s.io/provisioner-secret-name: rook-csi-cephfs-provisioner
+#   csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
+#   csi.storage.k8s.io/node-stage-secret-name: rook-csi-cephfs-node
+#   csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph
+# 
+# reclaimPolicy: Retain

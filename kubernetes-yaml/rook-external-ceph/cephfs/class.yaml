@@ -1,0 +1,12 @@
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: cephfs
+provisioner: ceph.com/cephfs
+reclaimPolicy: Retain
+parameters:
+  monitors: ceph-mon1.utyun.cn:6789,ceph-mon2.utyun.cn:6789,ceph-mon3.utyun.cn:6789
+  adminId: admin
+  adminSecretName: ceph-admin-secret
+  adminSecretNamespace: "rook-ceph"
+  claimRoot: /volumes/kubernetes
