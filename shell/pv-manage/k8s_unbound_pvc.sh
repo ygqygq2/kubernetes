@@ -109,12 +109,12 @@ function pathch_pv() {
             exit 0
         fi
     fi
-    yellow_echo "Clear data for"
+    yellow_echo "Unbound for"
     echo $pv|sed 's/ /\n/g'
     user_verify_function
     kubectl patch pv -p '{"spec":{"claimRef":{"apiVersion":"","kind":"","name":"","namespace":"","resourceVersion":"","uid":""}}}' \
         $pv
-    kubectl get pv $pv -oyaml> /tmp/.pv.yaml
+    kubectl get pv $pv -oyaml --export> /tmp/.pv.yaml
     sed '/claimRef/d' -i /tmp/.pv.yaml
     kubectl replace -f /tmp/.pv.yaml
 }
