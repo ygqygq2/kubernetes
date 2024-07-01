@@ -1,0 +1,92 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: tcp-connection-alerts
+  namespace: monitoring
+  labels:
+    release: prometheus-operator
+spec:
+  groups:
+  - name: tcp-connection-alerts
+    rules:
+    - alert: HighTCPConnections
+      expr: sum by(instance) (node_netstat_Tcp_CurrEstab) > 1000
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: High number of established TCP connections on instance {{ $labels.instance }}
+        description: "The number of established TCP connections on instance {{ $labels.instance }} is above 1000 for more than 5 minutes.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    - alert: HighTCPTIMEWAITConnections
+      expr: sum by(instance) (node_netstat_TcpExt_TCPTimeWait) > 500
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: High number of TCP TIME_WAIT connections on instance {{ $labels.instance }}
+        description: "The number of TCP TIME_WAIT connections on instance {{ $labels.instance }} is above 500 for more than 5 minutes.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    - alert: HighTCPActiveOpens
+      expr: sum by(instance) (rate(node_netstat_Tcp_ActiveOpens[5m])) > 100
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: High rate of TCP active opens on instance {{ $labels.instance }}
+        description: "The rate of TCP active opens on instance {{ $labels.instance }} is above 100 per second for more than 5 minutes.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    - alert: HighTCPPassiveOpens
+      expr: sum by(instance) (rate(node_netstat_Tcp_PassiveOpens[5m])) > 100
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: High rate of TCP passive opens on instance {{ $labels.instance }}
+        description: "The rate of TCP passive opens on instance {{ $labels.instance }} is above 100 per second for more than 5 minutes.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    - alert: HighTCPRetransSegs
+      expr: sum by(instance) (rate(node_netstat_Tcp_RetransSegs[5m])) > 50
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: High rate of TCP retransmitted segments on instance {{ $labels.instance }}
+        description: "The rate of TCP retransmitted segments on instance {{ $labels.instance }} is above 50 per second for more than 5 minutes.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    - alert: HighTCPInSegs
+      expr: sum by(instance) (rate(node_netstat_Tcp_InSegs[5m])) > 1000
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: High rate of incoming TCP segments on instance {{ $labels.instance }}
+        description: "The rate of incoming TCP segments on instance {{ $labels.instance }} is above 1000 per second for more than 5 minutes.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    - alert: HighTCPOutSegs
+      expr: sum by(instance) (rate(node_netstat_Tcp_OutSegs[5m])) > 1000
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: High rate of outgoing TCP segments on instance {{ $labels.instance }}
+        description: "The rate of outgoing TCP segments on instance {{ $labels.instance }} is above 1000 per second for more than 5 minutes.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    - alert: HighTCPListenDrops
+      expr: sum by(instance) (rate(node_netstat_TcpExt_ListenDrops[5m])) > 10
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: High rate of TCP listen drops on instance {{ $labels.instance }}
+        description: "The rate of TCP listen drops on instance {{ $labels.instance }} is above 10 per second for more than 5 minutes.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    - alert: HighTCPListenOverflows
+      expr: sum by(instance) (rate(node_netstat_TcpExt_ListenOverflows[5m])) > 10
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: High rate of TCP listen overflows on instance {{ $labels.instance }}
+        description: "The rate of TCP listen overflows on instance {{ $labels.instance }} is above 10 per second for more than 5 minutes.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}
+
